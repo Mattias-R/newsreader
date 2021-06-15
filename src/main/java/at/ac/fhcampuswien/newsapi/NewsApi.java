@@ -10,6 +10,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.IllegalFormatException;
 
 
 public class NewsApi {
@@ -123,6 +124,8 @@ public class NewsApi {
         } catch (MalformedURLException e) {
             // TODO improve ErrorHandling
             e.printStackTrace();
+        }catch (Exception e){
+            System.err.println("meine exepctoin");
         }
         HttpURLConnection con;
         StringBuilder response = new StringBuilder();
@@ -136,15 +139,26 @@ public class NewsApi {
             in.close();
         } catch (IOException e) {
             // TODO improve ErrorHandling
-            System.out.println("Error "+e.getMessage());
+            System.err.println("Error "+e.getMessage());
+        }catch (Exception e){
+            System.err.println("meine exepctoin");
         }
         return response.toString();
     }
 
     protected String buildURL() {
         // TODO ErrorHandling
-        String urlbase = String.format(NEWS_API_URL,getEndpoint().getValue(),getQ(),getApiKey());
-        StringBuilder sb = new StringBuilder(urlbase);
+        String urlbase = null;
+        StringBuilder sb = null;
+        try{
+            urlbase = String.format(NEWS_API_URL,getEndpoint().getValue(),getQ(),getApiKey());
+            sb = new StringBuilder(urlbase);
+        }catch(IllegalFormatException e){
+            System.err.println("ERROR " + e.getMessage());
+        }catch (Exception e){
+            System.err.println("meine exepctoin");
+        }
+
 
         System.out.println(urlbase);
 
@@ -193,10 +207,12 @@ public class NewsApi {
             try {
                 newsReponse = objectMapper.readValue(jsonResponse, NewsResponse.class);
                 if(!"ok".equals(newsReponse.getStatus())){
-                    System.out.println("Error: "+newsReponse.getStatus());
+                    System.err.println("Error: "+newsReponse.getStatus());
                 }
             } catch (JsonProcessingException e) {
-                System.out.println("Error: "+e.getMessage());
+                System.err.println("Error: "+e.getMessage());
+            }catch (Exception e){
+                System.err.println("meine exepctoin");
             }
         }
         //TODO improve Errorhandling
